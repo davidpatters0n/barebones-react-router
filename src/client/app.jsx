@@ -1,23 +1,46 @@
+/* eslint-disable react/prefer-stateless-function, class-methods-use-this, no-debugger*/
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Person from '../shared/person';
+import BookList from './booklist';
+import ShippingDetails from './shipping-details';
+import DeliveryDetails from './delivery-details';
 
-const newPerson = new Person('DJ').hello();
-
-class Listing extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { name: props.name };
+    this.state = { step: 1 };
   }
 
   render() {
-    return <div>{this.state.name}</div>;
+    let component = null;
+    const step = this.state.step;
+    switch (step) {
+      case 1: {
+        component = <BookList />;
+        break;
+      }
+      case 2: {
+        component = <ShippingDetails />;
+        break;
+      }
+      case 3: {
+        component = <DeliveryDetails />;
+        break;
+      }
+      default: {
+        component = <BookList />;
+      }
+    }
+    return (
+      <div>
+        { component }
+      </div>
+    );
   }
 }
 
-Listing.propTypes = {
-  name: React.PropTypes.string.isRequired,
-};
-
-ReactDOM.render(<Listing name={newPerson} />, document.querySelector('.app'));
+ReactDOM.render(
+  <App />,
+  document.querySelector('.container')
+);

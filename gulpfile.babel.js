@@ -3,6 +3,7 @@
 import gulp from 'gulp';
 import babel from 'gulp-babel';
 import eslint from 'gulp-eslint';
+import sass from 'gulp-sass';
 import del from 'del';
 import webpack from 'webpack-stream';
 import webpackConfig from './webpack.config.babel';
@@ -11,6 +12,7 @@ const paths = {
   allSrcJs: 'src/**/*.js?(x)',
   serverSrcJs: 'src/server/**/*.js?(x)',
   sharedSrcJs: 'src/shared/**/*.js?(x)',
+  allStyles: 'src/stylesheets/**/*.scss',
   clientEntryPoint: 'src/client/app.jsx',
   clientBundle: 'dist/client-bundle.js?(.map)',
   gulpFile: 'gulpfile.babel.js',
@@ -32,18 +34,28 @@ gulp.task('build', ['lint', 'clean'], () =>
     .pipe(gulp.dest(paths.libDir))
 );
 
-gulp.task('main', ['lint', 'clean'], () =>
+gulp.task('main', ['lint', 'clean', 'styles'], () => (
   gulp.src(paths.clientEntryPoint)
     .pipe(webpack(webpackConfig))
     .pipe(gulp.dest(paths.distDir))
-);
+));
+
+gulp.task('styles', () => (
+  gulp.src(paths.allStyles)
+    .pipe(sass())
+    .pipe(gulp.dest(paths.distDir))
+));
 
 gulp.task('watch', () => {
   gulp.watch(paths.allSrcJs, ['main']);
 });
 
+gulp.task('watchStyles', () => {
+  gulp.watch(paths.allStyles, ['styles']);
+});
 
-gulp.task('lint', () =>
+
+gulp.task('lint', () => (
   gulp.src([
     paths.allSrcJs,
     paths.gulpFile,
@@ -52,6 +64,6 @@ gulp.task('lint', () =>
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
-);
+));
 
-gulp.task('default', ['watch', 'main']);
+gulp.task('default', ['watch', 'watchStyles', 'main']);

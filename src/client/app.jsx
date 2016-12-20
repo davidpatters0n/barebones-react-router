@@ -1,6 +1,6 @@
 /* eslint-disable react/prefer-stateless-function, class-methods-use-this, no-debugger*/
 import 'babel-polyfill';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import BookList from './booklist';
 import ShippingDetails from './shipping-details';
@@ -9,27 +9,38 @@ import DeliveryDetails from './delivery-details';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { step: 1 };
+    this.state = { currentStep: 1, formValues: {} };
+    this.updateFormData = this.updateFormData.bind(this);
+  }
+
+  updateFormData(formData) {
+    const formValues = Object.assign({}, this.state.formValues, formData);
+    this.setState({ formValues });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.updateFormData({ selectedBooks: this.state.selectedBooks });
   }
 
   render() {
     let component = null;
-    const step = this.state.step;
-    switch (step) {
+    const currentStep = this.state.currentStep;
+    switch (currentStep) {
       case 1: {
-        component = <BookList />;
+        component = <BookList updateFormData={this.updateFormData} />;
         break;
       }
       case 2: {
-        component = <ShippingDetails />;
+        component = <ShippingDetails updateFormData={this.updateFormData} />;
         break;
       }
       case 3: {
-        component = <DeliveryDetails />;
+        component = <DeliveryDetails updateFormData={this.updateFormData} />;
         break;
       }
       default: {
-        component = <BookList />;
+        component = <BookList updateFormData={this.updateFormData} />;
       }
     }
     return (
@@ -39,6 +50,10 @@ class App extends React.Component {
     );
   }
 }
+
+App.propTypes = {
+  updateFormData: PropTypes.func,
+};
 
 ReactDOM.render(
   <App />,

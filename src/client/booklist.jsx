@@ -1,6 +1,6 @@
-/* eslint-disable class-methods-use-this */
+/* eslint-disable class-methods-use-this, no-debugger */
 import 'babel-polyfill';
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 class BookList extends React.Component {
   constructor(props) {
@@ -14,19 +14,34 @@ class BookList extends React.Component {
       selectedBooks: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSelectedBooks = this.handleSelectedBooks.bind(this);
   }
 
   handleSubmit(event) {
-    console.log(event);
     event.preventDefault();
-    console.log('Form submitted');
+    this.props.updateFormData({ selectedBooks: this.state.selectedBooks });
+  }
+
+  handleSelectedBooks(event) {
+    const selectedBooks = this.state.selectedBooks;
+    const index = selectedBooks.indexOf(event.target.value);
+
+    if (event.target.checked) {
+      if (index === -1) {
+        selectedBooks.push(event.target.value);
+      }
+    } else {
+      selectedBooks.splice(index, 1);
+    }
+    this.setState({ selectedBooks });
   }
 
   renderBook(book, key) {
     return (
       <div className="checkbox" key={key}>
         <label htmlFor="bookInfo">
-          <input type="checkbox" /> {book.name} -- {book.author}
+          <input type="checkbox" value={book.name} onChange={this.handleSelectedBooks} />
+          {book.name} -- {book.author}
         </label>
       </div>
     );
@@ -39,8 +54,8 @@ class BookList extends React.Component {
 
         <form onSubmit={this.handleSubmit}>
           {
-            this.state.books.map(book =>
-              this.renderBook(book)
+            this.state.books.map((book, key) =>
+              this.renderBook(book, key)
             )
           }
           <input type="submit" className="btn btn-success" />
@@ -49,5 +64,9 @@ class BookList extends React.Component {
     );
   }
 }
+
+BookList.propTypes = {
+  updateFormData: PropTypes.func,
+};
 
 export default BookList;

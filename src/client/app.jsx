@@ -1,4 +1,3 @@
-/* eslint-disable react/prefer-stateless-function, class-methods-use-this, no-debugger*/
 import 'babel-polyfill';
 import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';

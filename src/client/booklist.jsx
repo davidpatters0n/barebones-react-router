@@ -29,6 +29,7 @@ class BookList extends React.Component {
     } else {
       this.setState({ error: false });
       this.props.updateFormData({ selectedBooks: this.state.selectedBooks });
+      this.props.updateStep(2);
     }
   }
 
@@ -89,6 +90,7 @@ class BookList extends React.Component {
 
 BookList.propTypes = {
   updateFormData: PropTypes.func,
+  updateStep: PropTypes.func,
 };
 
 export default BookList;

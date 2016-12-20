@@ -19,6 +19,7 @@ class DeliveryDetails extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     this.props.updateFormData(this.state);
+    this.props.updateStep(4);
   }
 
   render() {
@@ -61,6 +62,7 @@ class DeliveryDetails extends React.Component {
 
 DeliveryDetails.propTypes = {
   updateFormData: PropTypes.func,
+  updateStep: PropTypes.func,
 };
 
 export default DeliveryDetails;

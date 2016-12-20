@@ -27,6 +27,7 @@ class ShippingDetails extends React.Component {
       this.setState({ error: 'Please enter your shipping address' });
     } else {
       this.setState({ error: false });
+      return true;
     }
     return false;
   }
@@ -42,6 +43,7 @@ class ShippingDetails extends React.Component {
 
     if (this.validateInput()) {
       this.props.updateFormData(formData);
+      this.props.updateStep(3);
     }
   }
 
@@ -117,6 +119,7 @@ class ShippingDetails extends React.Component {
 
 ShippingDetails.propTypes = {
   updateFormData: PropTypes.func,
+  updateStep: PropTypes.func,
 };
 
 export default ShippingDetails;

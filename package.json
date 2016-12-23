@@ -4,14 +4,17 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "gulp"
+    "prestart": "npm rebuild node-sass",
+    "start": "gulp",
+    "dev": "webpack-dev-server"
   },
   "dependencies": {
     "babel-polyfill": "^6.16.0",
     "gulp-sass": "^3.0.0",
     "react": "^15.3.2",
     "react-bootstrap": "^0.30.7",
-    "react-dom": "^15.3.2"
+    "react-dom": "^15.3.2",
+    "webpack-dev-server": "^1.16.2"
   },
   "devDependencies": {
     "babel": "^6.5.2",

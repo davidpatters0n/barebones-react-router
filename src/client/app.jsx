@@ -2,23 +2,19 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Person from '../shared/person';
+import { Router, Route, browserHistory } from 'react-router';
+import Index from './index';
+import About from './about';
+import Repos from './repos';
+import Repo from './repo';
 
-const newPerson = new Person('DJ').hello();
-
-class Listing extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { name: props.name };
-  }
-
-  render() {
-    return <div>{this.state.name}</div>;
-  }
-}
-
-Listing.propTypes = {
-  name: React.PropTypes.string.isRequired,
-};
-
-ReactDOM.render(<Listing name={newPerson} />, document.querySelector('.app'));
+ReactDOM.render((
+  <Router history={browserHistory}>
+    <Route path="/" component={Index}>
+      <Route path="/repos" component={Repos}>
+        <Route path="/repos/:userName/:repoName" component={Repo} />
+      </Route>
+      <Route path="/about" component={About} />
+    </Route>
+  </Router>
+), document.querySelector('.app'));

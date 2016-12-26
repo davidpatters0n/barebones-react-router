@@ -1,5 +1,6 @@
+// @flow
 export default class Person {
-  constructor(name) {
+  constructor(name: string) {
     this.name = name;
   }
 

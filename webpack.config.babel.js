@@ -1,4 +1,5 @@
 import path from 'path';
+import webpack from 'webpack';
 
 const APP_DIR = path.resolve(__dirname, 'dist');
 const BUILD_DIR = path.resolve(__dirname, 'src');
@@ -25,6 +26,11 @@ export default {
       },
     ],
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      _: 'underscore'
+    })
+  ],
   resolve: {
     modules: [BUILD_DIR, 'node_modules'],
     extensions: ['', '.js', '.jsx'],

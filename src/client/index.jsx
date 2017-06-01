@@ -9,15 +9,24 @@ class Index extends React.Component {
     this.state = { name: 'test' };
   }
 
+  shouldComponentUpdate () {
+    return false;
+  }
+
   render() {
     return (
       <div>
-        <h1>React + React Router</h1>
-        <ul role="navigation">
-          <li><NavLink to="/">Home</NavLink></li>
-          <li><NavLink to="/about">About</NavLink></li>
-          <li><NavLink to="/repos">Repos</NavLink></li>
-        </ul>
+        <nav className="navbar navbar-default navbar-static-top">
+          <div className="container-fluid">
+            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul className="nav navbar-nav" role="navigation">
+                <li className="active"><NavLink to="/">Home</NavLink></li>
+                <li><NavLink to="/about">About</NavLink></li>
+                <li><NavLink to="/repos">Repos</NavLink></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
 
         {this.props.children || <Home />}
       </div>

@@ -1,19 +1,26 @@
-/* eslint-disable no-unused-vars */
-
-import React, { PropTypes } from 'react';
+// @flow
+/* eslint-disable react/sort-comp */
+import React from 'react';
 import SearchForm from './search-form';
 
-class SearchContainer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      atms: '',
-    };
+type Props = {
+  onSearchUpdate: Function,
+}
 
-    this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+class SearchContainer extends React.Component<void, Props, any> {
+  props: Props;
+
+  constructor(props: Props) {
+    super(props);
+    const self: Object = this;
+    self.handleSearchSubmit = this.handleSearchSubmit.bind(this);
   }
 
-  handleSearchSubmit(searchTerm) {
+  shouldComponentUpdate () {
+    return false;
+  }
+
+  handleSearchSubmit(searchTerm: {address: string, lat: number, lng: number}): void {
     this.props.onSearchUpdate(searchTerm);
   }
 
@@ -25,9 +32,4 @@ class SearchContainer extends React.Component {
     );
   }
 }
-
-SearchContainer.propTypes = {
-  onSearchUpdate: PropTypes.func,
-};
-
 export default SearchContainer;

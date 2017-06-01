@@ -1,51 +1,67 @@
-import React, { PropTypes } from 'react';
+// @flow
+/* eslint-disable no-console, no-debugger, react/sort-comp*/
+import React from 'react';
+import PlacesAutocomplete, { geocodeByAddress } from 'react-places-autocomplete';
 
-class SearchForm extends React.Component {
+type Props = {
+  onSearchSubmit: Function,
+}
 
-  constructor(props) {
+type State = {
+  address: string,
+  searchTerm: string,
+}
+
+class SearchForm extends React.Component<void, Props, State> {
+  state: State;
+  props: Props;
+
+  constructor(props : Props) {
     super(props);
 
     this.state = {
+      address: 'SW17 9JY',
       searchTerm: '',
     };
 
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleSearchTermChange = this.handleSearchTermChange.bind(this);
+    const self: Object = this;
+    self.handleSelect = this.handleSelect.bind(this);
+    self.handleSearchTermChange = this.handleSearchTermChange.bind(this);
   }
 
-  handleSearchTermChange(e) {
-    this.setState({ searchTerm: e.target.value });
+  componentWillMount() {
+    console.log('test.....');
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
+  handleSearchTermChange(address : string) {
+    this.setState({ address });
+  }
 
-    const searchTerm = this.state.searchTerm.trim();
+  handleSelect() {
+    const { address } = this.state;
 
-    if (!searchTerm) {
-      return;
-    }
-
-    this.setState({ searchTerm: '' });
-    this.props.onSearchSubmit({ searchTerm });
+    geocodeByAddress(address, (err, { lat, lng }) => {
+      if (err) { console.log('Oh no!', err); }
+      this.setState({ searchTerm: '' });
+      console.log(`Yay! got latitude and longitude for ${address}`, { lat, lng });
+      this.props.onSearchSubmit({ address, lat, lng });
+    });
   }
 
   render() {
-    return (
-      <form className="searchForm" onSubmit={this.handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="search-term">Search</label>
-          <input type="text" placeholder="Search ATM" className="form-control" value={this.state.searchTerm} onChange={this.handleSearchTermChange} />
-        </div>
+    const cssClasses = {
+      root: 'form-group',
+      input: 'form-control',
+    };
 
-        <button type="submit" className="btn btn-primary">Search</button>
-      </form>
+    return (
+      <PlacesAutocomplete
+        value={this.state.address}
+        onChange={this.handleSearchTermChange}
+        onSelect={this.handleSelect}
+        classNames={cssClasses}
+      />
     );
   }
 }
-
-SearchForm.propTypes = {
-  onSearchSubmit: PropTypes.func,
-};
-
 export default SearchForm;

@@ -5,11 +5,12 @@ import axios from 'axios';
 import { withGoogleMap, GoogleMap, Marker } from 'react-google-maps';
 import MarkerClusterer from 'react-google-maps/lib/addons/MarkerClusterer';
 import SearchContainer from './search-container';
+import AtmList from './atm-list';
 
 const MarkerMap = withGoogleMap(props => (
   <GoogleMap
-    defaultZoom={12}
-    defaultCenter={{ lat: 51.418981, lng: -0.166303 }}
+    defaultZoom={13}
+    center={{ lat: props.lat, lng: props.lng }}
   >
     <MarkerClusterer
       averageCenter
@@ -29,55 +30,75 @@ const MarkerMap = withGoogleMap(props => (
 
 class Home extends React.Component {
 
-  constructor(props) {
+  constructor(props ) {
     super(props);
     this.state = {
-      markers: [],
-      atms: '',
+      atms: [],
     };
 
     this.handleSearchUpdate = this.handleSearchUpdate.bind(this);
   }
 
   componentDidMount() {
+    this.setLatLng();
     this.fetch();
   }
 
   fetch(searchTerm = null) {
     axios.get('http://localhost:4567', {
-      params: searchTerm,
+      params: { address: searchTerm },
     })
     .then((res) => {
-      const markers = res.data.responseData[0].foundATMLocations.map(elem =>
+      const atms = _.uniq(res.data.responseData[0].foundATMLocations.map(elem =>
         elem.location,
-      );
-      this.setState({ markers });
+      ), 'ownerBusId');
+      this.setState({ atms });
+    });
+  }
+
+  setLatLng() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.setState({lat: position.coords.latitude, lng: position.coords.longitude, displayMap: true});
     });
   }
 
   handleSearchUpdate(term) {
-    this.fetch(term);
+    this.setState({ lat: term.lat, lng: term.lng });
+    this.fetch(term.address);
   }
 
   render() {
+    let map;
+    if (this.state.displayMap) {
+      map = (
+        <div style={{ height: '100%' }}>
+          <MarkerMap
+            containerElement={
+              <div style={{ height: '550px' }} />
+            }
+            mapElement={
+              <div style={{ height: '550px' }} />
+            }
+            markers={this.state.atms}
+            lat={this.state.lat}
+            lng={this.state.lng}
+          />
+        </div>
+      );
+    } else {
+      map = <div>Loading....</div>;
+    }
+
+
     return (
-      <div className="row">
+      <div className="row" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
         <div className="col-md-6" style={{ height: '550px' }}>
           <Helmet title="Google Map Example" />
-          <div style={{ height: '100%' }}>
-            <MarkerMap
-              containerElement={
-                <div style={{ height: '550px' }} />
-              }
-              mapElement={
-                <div style={{ height: '550px' }} />
-              }
-              markers={this.state.markers}
-            />
-          </div>
+          {map}
         </div>
         <div className="col-md-6">
           <SearchContainer onSearchUpdate={this.handleSearchUpdate} atms={this.state.atms} />
+          <AtmList atms={this.state.atms} />
         </div>
       </div>
     );

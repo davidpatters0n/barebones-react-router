@@ -1,9 +1,12 @@
+// @flow
 export default class Person {
+  name: string;
+
   constructor(name: string) {
     this.name = name;
   }
 
-  hello() {
+  hello(): string {
     return `My name is ${this.name}`;
   }
 }
